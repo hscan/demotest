@@ -2,10 +2,7 @@ package br.com.sigma.demotest.service;
 
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.transaction.Transactional;
+import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -13,6 +10,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import br.com.sigma.demotest.business.NoticiaBC;
 import br.com.sigma.demotest.entity.Noticia;
 
 @Path("noticia")
@@ -20,20 +18,17 @@ import br.com.sigma.demotest.entity.Noticia;
 @Consumes(MediaType.APPLICATION_JSON)
 public class NoticiaREST {
     
-    @PersistenceContext
-    protected EntityManager em;
+    @Inject
+    NoticiaBC noticiaBC;
     
     @POST
-    @Transactional
     public void create(Noticia noticia) {
-        em.persist(noticia);
+        noticiaBC.add(noticia);
     }
     
     @GET
     public List<Noticia> list() {
-        CriteriaQuery<Noticia> query = em.getCriteriaBuilder().createQuery(Noticia.class);
-        query.select(query.from(Noticia.class));
-        return em.createQuery(query).getResultList();
+        return noticiaBC.lista();
     }
 
 }
